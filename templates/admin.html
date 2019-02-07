@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+{% block body %}
+  <form method="POST">
+    <table>
+      <tr>
+        <td colspan="2">Login do administrador</td>
+      </tr>
+      <tr>
+        <td>Login:</td>
+        <td><input type="text" name="login" value="{{userValue}}"></td>
+      </tr>
+      <tr>
+        <td>Senha:</td>
+        <td><input type="text" name="password" value="{{passValue}}"></td>
+      </tr>
+      <tr>
+        <td>Chave:</td>
+        <td><input type="text" name="key" value="{{key}}"></td>
+      </tr>
+      <tr>
+        <td>Horas:</td>
+        <td>
+          <select name="horas">
+            <option value="0">0 minutos</option>
+            <option value="0.5">30 minutos</option>
+            <option value="1">1 hora</option>
+            <option value="1.5">1 hora e 30 minutos</option>
+            <option value="2">2 horas</option>
+            <option value="2.5">2 horas e 30 minutos</option>
+            <option value="3">3 horas</option>
+            <option value="3.5">3 horas e 30 minutos</option>
+            <option value="4">4 horas</option>
+            <option value="4.5">4 horas e 30 minutos</option>
+            <option value="5" selected>5 horas</option>
+            <option value="5.5">5 horas e 30 minutos</option>
+            <option value="6">6 horas</option>
+            <option value="6.5">6 horas e 30 minutos</option>
+            <option value="7">7 horas</option>
+            <option value="7.5">7 horas e 30 minutos</option>
+            <option value="8">8 horas</option>
+            <option value="8.5">8 horas e 30 minutos</option>
+            <option value="9">9 horas</option>
+            <option value="9.5">9 horas e 30 minutos</option>
+            <option value="10">10 horas</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Liberado:
+        </td>
+        <td>
+          {{liberado}}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Tempo:
+        </td>
+        <td>
+          {{maxtimeopen}} segundos, máximo de acionamento
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <input type="submit">
+        </td>
+      </tr>
+    </table>
+  </form>
+
+  <img src="{{ url_for('static', filename='img/led.png') }}" width="200" />
+  <img src="{{ url_for('static', filename='img/diagram.png') }}" height="200" />
+
+  {% if msg %}
+    <p>{{msg}}</p>
+  {% endif %}
+  {% if link %}
+    <a href="{{link}}">Clique Aqui!</a>
+  {% endif %}
+{% endblock %}
