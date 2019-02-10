@@ -1,0 +1,5 @@
+Abra a caixa do interfone, desplugue os fios do fone (são 3 fios com um socket).
+O fio vermelho vai no dreno do transistor, o fio preto vai no source do transistor.
+Conecte os terras: o fio preto do interfone, o GND da raspberry e do arduino.
+Conecte o pino 17 da raspberry na entrada A0 do arduino.
+Conecte o pino de led 13 do arduino no gate do transistor.

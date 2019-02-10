@@ -27,9 +27,11 @@ app.secret_key = 'secret key'
 socketio = SocketIO(app)
 KEY = 'secret key 2'
 timer = None
-MAXTIMEOPEN = 1
+MAXTIMEOPEN = 3 if not DEBUG else 10
 LIBERADO = datetime.now()
 PORTA = LED(17)
+# começa a porta em off
+PORTA.off()
 if DEBUG:
     LIBERADO += timedelta(hours=5)
     KEY = ''

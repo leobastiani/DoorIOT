@@ -71,6 +71,9 @@
 
   <img src="{{ url_for('static', filename='img/led.png') }}" width="200" />
   <img src="{{ url_for('static', filename='img/diagram.png') }}" height="200" />
+  <img src="{{ url_for('static', filename='img/transistor.png') }}" height="200" />
+
+  <pre>{% include 'tutorial.txt' %}</pre>
 
   {% if msg %}
     <p>{{msg}}</p>
