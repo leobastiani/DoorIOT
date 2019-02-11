@@ -75,11 +75,13 @@
   $('.container').bind('touchstart mousedown', function (e) {
     e.preventDefault();
     socket.emit('door', {open: 1, close: 0});
+    $(this).find('.item').addClass('yellow');
   })
 
   $('.container').bind('touchend mouseup', function (e) {
     e.preventDefault();
     socket.emit('door', {open: 0, close: 1});
+    $(this).find('.item').removeClass('yellow');
   })
 </script>
 {% endblock %}

@@ -11,6 +11,9 @@
   background: #56c886;
   border-radius: 100%;
 }
+.yellow {
+  background: yellow !important;
+}
 .container .item:before,
 .container .item:after {
   border: 1px solid #56c886;
