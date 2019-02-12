@@ -10,11 +10,18 @@ from datetime import datetime, timedelta
 from threading import Timer
 from gpiozero import LED
 
+import argparse
+
+parser = argparse.ArgumentParser(description='Open the door of my house')
+parser.add_argument('--debug', '-d', action='store_true', help='Debug mode')
+args = parser.parse_args()
+
+DEBUG = args.debug
+
 USERS = {
     'user': '123',
 }
 
-DEBUG = False
 def debug(*args):
     '''funciona como print, mas só é executada se sys.flags.debug == 1'''
     if not DEBUG:
