@@ -1,8 +1,5 @@
 .container {
   position: absolute;
-  top: 50%;
-  left: 6%;
-  margin-top: 42px;
 }
 .container .item {
   position: relative;
