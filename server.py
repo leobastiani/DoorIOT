@@ -2,7 +2,6 @@
 #encoding=utf-8
 from __future__ import print_function, division, absolute_import
 
-import os
 from functools import wraps
 from flask import Flask, render_template, request, session
 from flask_socketio import SocketIO, join_room, emit
