@@ -10,6 +10,7 @@ import sys
 from datetime import datetime, timedelta
 from threading import Timer
 from gpiozero import LED
+from users import USERS
 
 import argparse
 
@@ -19,10 +20,6 @@ args = parser.parse_args()
 
 DEBUG = args.debug
 
-USERS = {
-    'user': '123',
-}
-
 def debug(*args):
     '''funciona como print, mas só é executada se sys.flags.debug == 1'''
     if not DEBUG:
@@ -31,7 +28,7 @@ def debug(*args):
 
 # initialize Flask
 app = Flask(__name__)
-KEY = os.getenv('KEY', 'secret key')
+KEY = 'first_key'
 timer = None
 MAXTIMEOPEN = 3
 LIBERADO = datetime.now()
@@ -41,7 +38,6 @@ PORTA.off()
 if DEBUG:
     LIBERADO += timedelta(hours=5)
     KEY = ''
-debug("KEY:", KEY)
 
 def openDoor():
     global timer
@@ -61,7 +57,7 @@ def closeDoor():
     timer = None
     PORTA.off()
 
-def doLogin(login, password):
+def canLogin(login, password):
     if login in USERS:
         if USERS[login] == password:
             return True
@@ -94,7 +90,7 @@ def admin():
         password = request.form['password']
         horas = request.form['horas']
         KEY = request.form['key']
-        if doLogin(login, password):
+        if canLogin(login, password):
             LIBERADO = datetime.now() + timedelta(hours=float(horas))
             msg = 'Sucesso!'
             link = '/?key='+KEY
