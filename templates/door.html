@@ -9,7 +9,7 @@
       width: 100%;
       height: 100%;
     }
-    img {
+    #background {
       width: 100%;
       height: 100%;
     }
@@ -31,7 +31,7 @@
       text-shadow: 2px 2px 0 #4074b5, 2px -2px 0 #4074b5, -2px 2px 0 #4074b5, -2px -2px 0 #4074b5, 2px 0px 0 #4074b5, 0px 2px 0 #4074b5, -2px 0px 0 #4074b5, 0px -2px 0 #4074b5;
     }
   </style>
-  <img src="https://media.giphy.com/media/qbXQVp693DrnG/giphy.gif">
+  <img id="background" src="https://media.giphy.com/media/Tb2i75AlI926I/giphy.gif">
   <div id="onTop">
     <h1>Destrave as trancas</h1>
     <label class="switch trava">
@@ -74,14 +74,20 @@
 
   $('.container').bind('touchstart mousedown', function (e) {
     e.preventDefault();
-    socket.emit('door', {open: 1, close: 0});
-    $(this).find('.item').addClass('yellow');
+    var self = this;
+
+    $.get('/door', {key: key, open: 1, close: 0}, function(data) {
+      $(self).find('.item').addClass('yellow');
+    });
   })
 
   $('.container').bind('touchend mouseup', function (e) {
     e.preventDefault();
-    socket.emit('door', {open: 0, close: 1});
-    $(this).find('.item').removeClass('yellow');
+    var self = this;
+
+    $.get('/door', {key: key, open: 0, close: 1}, function(data) {
+      $(self).find('.item').removeClass('yellow');
+    });
   })
 </script>
 {% endblock %}

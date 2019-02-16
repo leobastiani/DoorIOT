@@ -2,7 +2,8 @@
 #encoding=utf-8
 from __future__ import print_function, division, absolute_import
 
-
+import os
+from functools import wraps
 from flask import Flask, render_template, request, session
 from flask_socketio import SocketIO, join_room, emit
 import sys
@@ -30,11 +31,9 @@ def debug(*args):
 
 # initialize Flask
 app = Flask(__name__)
-app.secret_key = 'secret key'
-socketio = SocketIO(app)
-KEY = 'secret key 2'
+KEY = os.getenv('KEY', 'secret key')
 timer = None
-MAXTIMEOPEN = 3 if not DEBUG else 10
+MAXTIMEOPEN = 3
 LIBERADO = datetime.now()
 PORTA = LED(17)
 # começa a porta em off
@@ -42,6 +41,7 @@ PORTA.off()
 if DEBUG:
     LIBERADO += timedelta(hours=5)
     KEY = ''
+debug("KEY:", KEY)
 
 def openDoor():
     global timer
@@ -67,12 +67,19 @@ def doLogin(login, password):
             return True
     return False
 
+def withAuthorized(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if datetime.now() <= LIBERADO:
+            if KEY == request.args.get('key', ''):
+                return f(*args, **kwargs)
+        return 'unauthorized'
+    return decorated_function
+
 @app.route('/')
+@withAuthorized
 def index():
-    if datetime.now() <= LIBERADO:
-        if KEY == request.args.get('key', ''):
-            return render_template('door.html', websocket=True)
-    return 'unauthorized'
+    return render_template('door.html')
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
@@ -96,23 +103,16 @@ def admin():
     return render_template('admin.html', liberado=LIBERADO.strftime("%Y-%m-%d %H:%M"),
         msg=msg, maxtimeopen=MAXTIMEOPEN, key=KEY, link=link, userValue=userValue, passValue=passValue)
 
-@socketio.on('door')
-def on_door(data):
-    debug("data:", data)
-    abrir = data.get('open', False)
-    fechar = data.get('close', False)
+@app.route('/door')
+@withAuthorized
+def door():
+    abrir = request.args.get('open', False, type=int)
+    fechar = request.args.get('close', False, type=int)
     if abrir and not fechar:
         openDoor()
     elif fechar:
         closeDoor()
-
-@socketio.on('connect')
-def on_connect():
-    debug('Connected!')
-
-@socketio.on('disconnect')
-def on_disconnect():
-    debug('Disconnected!')
+    return ''
 
 if __name__ == '__main__':
-    socketio.run(app, debug=DEBUG, host='0.0.0.0')
+    app.run(debug=DEBUG, host='0.0.0.0')
