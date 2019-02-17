@@ -9,7 +9,7 @@ import sys
 from datetime import datetime, timedelta
 from threading import Timer
 from gpiozero import LED
-from users import USERS
+from config import USERS, APP_SECRET_KEY
 
 import argparse
 
@@ -27,6 +27,8 @@ def debug(*args):
 
 # initialize Flask
 app = Flask(__name__)
+app.secret_key = APP_SECRET_KEY
+socketio = SocketIO(app)
 KEY = 'first_key'
 timer = None
 MAXTIMEOPEN = 3
@@ -62,19 +64,21 @@ def canLogin(login, password):
             return True
     return False
 
-def withAuthorized(f):
+def isAuthorized(data):
+    return datetime.now() <= LIBERADO and KEY == data.get('key', '')
+
+def withIsAuthorized(f, data=None):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if datetime.now() <= LIBERADO:
-            if KEY == request.args.get('key', ''):
-                return f(*args, **kwargs)
+        if isAuthorized(request.args):
+            return f(*args, **kwargs)
         return 'unauthorized'
     return decorated_function
 
 @app.route('/')
-@withAuthorized
+@withIsAuthorized
 def index():
-    return render_template('door.html')
+    return render_template('door.html', websocket=True)
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
@@ -99,7 +103,7 @@ def admin():
         msg=msg, maxtimeopen=MAXTIMEOPEN, key=KEY, link=link, userValue=userValue, passValue=passValue)
 
 @app.route('/door')
-@withAuthorized
+@withIsAuthorized
 def door():
     abrir = request.args.get('open', False, type=int)
     fechar = request.args.get('close', False, type=int)
@@ -109,5 +113,25 @@ def door():
         closeDoor()
     return ''
 
+@socketio.on('door')
+def on_door(data):
+    debug("data:", data)
+    if not isAuthorized(data):
+        return
+    abrir = data.get('open', False)
+    fechar = data.get('close', False)
+    if abrir and not fechar:
+        openDoor()
+    elif fechar:
+        closeDoor()
+
+@socketio.on('connect')
+def on_connect():
+    debug('Connected!')
+
+@socketio.on('disconnect')
+def on_disconnect():
+    debug('Disconnected!')
+
 if __name__ == '__main__':
-    app.run(debug=DEBUG, host='0.0.0.0')
+    socketio.run(app, debug=DEBUG, host='0.0.0.0')

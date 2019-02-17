@@ -35,7 +35,22 @@
   {% if websocket %}
     <script type="text/javascript" src="{{ url_for('static', filename='vendor/js/socket.io.min.js') }}"></script>
     <script type="text/javascript" charset="utf-8">
-      var socket = io.connect('http://' + document.domain + ':' + location.port);
+      var connect = function () {};
+      var disconnect = function () {};
+      var socket;
+      if(window.WebSocket) {
+        socket = io('http://' + document.domain + ':' + location.port, {autoConnect: false});
+        connect = function () {
+          if(socket.disconnected) {
+            socket.connect()
+          }
+        }
+        disconnect = function () {
+          if(socket.connected) {
+            socket.disconnect()
+          }
+        }
+      }
     </script>
   {% endif %}
 
