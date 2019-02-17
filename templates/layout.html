@@ -12,10 +12,7 @@
 <body>
   {% block body %}{% endblock %}
 
-  <script
-    src="https://code.jquery.com/jquery-3.3.1.min.js"
-    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-    crossorigin="anonymous"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='vendor/js/jquery-3.3.1.min.js') }}"></script>
   <script>
     var getUrlParameter = function getUrlParameter(sParam, def) {
       var sPageURL = window.location.search.substring(1),
@@ -34,6 +31,14 @@
     };
     var key = getUrlParameter('key', '');
   </script>
+
+  {% if websocket %}
+    <script type="text/javascript" src="{{ url_for('static', filename='vendor/js/socket.io.min.js') }}"></script>
+    <script type="text/javascript" charset="utf-8">
+      var socket = io.connect('http://' + document.domain + ':' + location.port);
+    </script>
+  {% endif %}
+
   {% block js %}{% endblock %}
 </body>
 
