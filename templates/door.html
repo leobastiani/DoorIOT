@@ -67,6 +67,10 @@
 
 {% block js %}
 <script>
+  var door = function (data, cb) {
+    return $.get('/door', data, cb);
+  }
+
   $('.trava :checkbox').change(function(event) {
     var travaDestravada = $('.trava :checkbox').filter(function() {
       return !this.checked;
@@ -85,7 +89,7 @@
     e.preventDefault();
     var self = this;
 
-    $.get('/door', {key: key, open: 1, close: 0}, function(data) {
+    door({key: key, open: 1, close: 0}, function(data) {
       $(self).find('.item').addClass('yellow');
     });
   })
@@ -94,7 +98,7 @@
     e.preventDefault();
     var self = this;
 
-    $.get('/door', {key: key, open: 0, close: 1}, function(data) {
+    door({key: key, open: 0, close: 1}, function(data) {
       $(self).find('.item').removeClass('yellow');
     });
   })
